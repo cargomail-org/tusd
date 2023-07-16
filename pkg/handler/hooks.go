@@ -1,12 +1,16 @@
 package handler
 
-import "net/http"
+import (
+	"context"
+	"net/http"
+)
 
 // HookEvent represents an event from tusd which can be handled by the application.
 type HookEvent struct {
 	// Upload contains information about the upload that caused this hook
 	// to be fired.
-	Upload FileInfo
+	Upload  FileInfo
+	Context context.Context
 	// HTTPRequest contains details about the HTTP request that reached
 	// tusd.
 	HTTPRequest HTTPRequest
@@ -20,7 +24,8 @@ func newHookEvent(info FileInfo, r *http.Request) HookEvent {
 	r.Header.Set("Host", r.Host)
 
 	return HookEvent{
-		Upload: info,
+		Upload:  info,
+		Context: r.Context(),
 		HTTPRequest: HTTPRequest{
 			Method:     r.Method,
 			URI:        r.RequestURI,
